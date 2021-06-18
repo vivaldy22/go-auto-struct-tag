@@ -1,20 +1,21 @@
 {
-	"name": "go-struct-tag",
-	"displayName": "Go struct tag",
-	"description": "Auto complete go struct tag",
+	"name": "go-auto-struct-tag",
+	"displayName": "Go Auto Struct Tag",
+	"description": "Auto complete struct tag for Go",
 	"keywords": [
 		"go",
 		"golang",
+		"auto",
 		"struct",
 		"tag",
 		"complete",
 		"json"
 	],
-	"version": "0.0.10",
-	"publisher": "liuchao",
+	"version": "0.0.1",
+	"publisher": "vivaldy22",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/guyanyijiu/go-struct-tag"
+		"url": "https://github.com/vivaldy22/go-auto-struct-tag"
 	},
 	"license": "MIT",
 	"engines": {
