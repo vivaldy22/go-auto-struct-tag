@@ -22,10 +22,25 @@ suite('Function Test Suite', () => {
 		assert.strictEqual(false, util.isASCIIUpper('z'));
 	});
 
+	test('countUpper test', () => {
+		assert.strictEqual(0, util.countUpper("id"));
+		assert.strictEqual(1, util.countUpper("Id"));
+		assert.strictEqual(2, util.countUpper("ID"));
+		assert.strictEqual(1, util.countUpper("Name"));
+		assert.strictEqual(3, util.countUpper("UserID"));
+	});
+
 	test('gonicCasedName test', () => {
 		assert.strictEqual('id', util.gonicCasedName('ID'));
 		assert.strictEqual('user_id', util.gonicCasedName('UserID'));
 		assert.strictEqual('my_uid', util.gonicCasedName('MyUID'));
 		assert.strictEqual('seq_id_tag', util.gonicCasedName('SeqIDTag'));
+	});
+
+	test('camelCasedName test', () => {
+		assert.strictEqual('iD', util.camelCasedName('ID'));
+		assert.strictEqual('userID', util.camelCasedName('UserID'));
+		assert.strictEqual('myUID', util.camelCasedName('MyUID'));
+		assert.strictEqual('seqIDTag', util.camelCasedName('SeqIDTag'));
 	});
 });
