@@ -45,33 +45,73 @@ function getMatchTypes(word: string): MatchTypeResult {
 	return result;
 }
 
-function generateJsonCompletion(fieldName: string, fieldType: string): vscode.CompletionItem[] {
+function generateJsonCompletion(snakeCasedName: string, camelCasedName: string, fieldType: string): vscode.CompletionItem[] {
+	if (camelCasedName.length === 2 || camelCasedName === "iD" || util.countUpper(camelCasedName) < 1) {
+		camelCasedName = camelCasedName.toLowerCase();
+		return [
+			new vscode.CompletionItem(`json:"${camelCasedName}"`, vscode.CompletionItemKind.Text),
+			new vscode.CompletionItem(`json:"${camelCasedName}" gorm:"${camelCasedName}"`, vscode.CompletionItemKind.Text),
+			new vscode.CompletionItem(`json:"${camelCasedName},omitempty"`, vscode.CompletionItemKind.Text),
+			new vscode.CompletionItem(`json:"-"`, vscode.CompletionItemKind.Text),
+		];
+	}
+
 	return [
-		new vscode.CompletionItem(`json:"${fieldName}"`, vscode.CompletionItemKind.Text),
-		new vscode.CompletionItem(`json:"${fieldName},omitempty"`, vscode.CompletionItemKind.Text),
+		new vscode.CompletionItem(`json:"${camelCasedName}"`, vscode.CompletionItemKind.Text),
+		new vscode.CompletionItem(`json:"${snakeCasedName}"`, vscode.CompletionItemKind.Text),
+		new vscode.CompletionItem(`json:"${camelCasedName}" gorm:"${snakeCasedName}"`, vscode.CompletionItemKind.Text),
+		new vscode.CompletionItem(`json:"${snakeCasedName}" gorm:"${snakeCasedName}`, vscode.CompletionItemKind.Text),
+		new vscode.CompletionItem(`json:"${camelCasedName},omitempty"`, vscode.CompletionItemKind.Text),
+		new vscode.CompletionItem(`json:"${snakeCasedName},omitempty"`, vscode.CompletionItemKind.Text),
 		new vscode.CompletionItem(`json:"-"`, vscode.CompletionItemKind.Text),
 	];
 }
 
-function generateFormCompletion(fieldName: string, fieldType: string): vscode.CompletionItem[] {
+function generateFormCompletion(snakeCasedName: string, camelCasedName: string, fieldType: string): vscode.CompletionItem[] {
+	if (camelCasedName.length === 2 || camelCasedName === "iD" || util.countUpper(camelCasedName) < 1) {
+		camelCasedName = camelCasedName.toLowerCase();
+		return [
+			new vscode.CompletionItem(`form:"${camelCasedName}"`, vscode.CompletionItemKind.Text),
+			new vscode.CompletionItem(`form:"${camelCasedName},omitempty"`, vscode.CompletionItemKind.Text),
+			new vscode.CompletionItem(`form:"-"`, vscode.CompletionItemKind.Text),
+		];
+	}
+
 	return [
-		new vscode.CompletionItem(`form:"${fieldName}"`, vscode.CompletionItemKind.Text),
-		new vscode.CompletionItem(`form:"${fieldName},omitempty"`, vscode.CompletionItemKind.Text),
+		new vscode.CompletionItem(`form:"${camelCasedName}"`, vscode.CompletionItemKind.Text),
+		new vscode.CompletionItem(`form:"${snakeCasedName}"`, vscode.CompletionItemKind.Text),
+		new vscode.CompletionItem(`form:"${camelCasedName},omitempty"`, vscode.CompletionItemKind.Text),
+		new vscode.CompletionItem(`form:"${snakeCasedName},omitempty"`, vscode.CompletionItemKind.Text),
 		new vscode.CompletionItem(`form:"-"`, vscode.CompletionItemKind.Text),
 	];
 }
 
-function generateBsonCompletion(fieldName: string, fieldType: string): vscode.CompletionItem[] {
-	let items: vscode.CompletionItem[] = [];
-	if (fieldName === 'id') {
-		items.push(new vscode.CompletionItem('bson:"_id"', vscode.CompletionItemKind.Text));
+function generateBsonCompletion(snakeCasedName: string, camelCasedName: string, fieldType: string): vscode.CompletionItem[] {
+	if (snakeCasedName === 'id' || camelCasedName === 'iD') {
+		camelCasedName = camelCasedName.toLowerCase();
+		return [
+			new vscode.CompletionItem('bson:"_id"', vscode.CompletionItemKind.Text),
+			new vscode.CompletionItem(`bson:"${camelCasedName}"`, vscode.CompletionItemKind.Text),
+			new vscode.CompletionItem(`bson:"${camelCasedName},omitempty"`, vscode.CompletionItemKind.Text),
+			new vscode.CompletionItem('bson:"-"', vscode.CompletionItemKind.Text)
+		];
 	}
-	items.push(
-		new vscode.CompletionItem(`bson:"${fieldName}"`, vscode.CompletionItemKind.Text),
-		new vscode.CompletionItem(`bson:"${fieldName},omitempty"`, vscode.CompletionItemKind.Text),
+
+	if (camelCasedName.length === 2 || util.countUpper(camelCasedName) < 1) {
+		return [
+			new vscode.CompletionItem(`bson:"${camelCasedName}"`, vscode.CompletionItemKind.Text),
+			new vscode.CompletionItem(`bson:"${camelCasedName},omitempty"`, vscode.CompletionItemKind.Text),
+			new vscode.CompletionItem('bson:"-"', vscode.CompletionItemKind.Text)
+		];
+	}
+
+	return [
+		new vscode.CompletionItem(`bson:"${camelCasedName}"`, vscode.CompletionItemKind.Text),
+		new vscode.CompletionItem(`bson:"${snakeCasedName}"`, vscode.CompletionItemKind.Text),
+		new vscode.CompletionItem(`bson:"${camelCasedName},omitempty"`, vscode.CompletionItemKind.Text),
+		new vscode.CompletionItem(`bson:"${snakeCasedName},omitempty"`, vscode.CompletionItemKind.Text),
 		new vscode.CompletionItem('bson:"-"', vscode.CompletionItemKind.Text)
-	);
-	return items;
+	];
 }
 
 function generateXormCompletion(fieldName: string, fieldType: string): vscode.CompletionItem[] {
@@ -219,26 +259,27 @@ export function activate(context: vscode.ExtensionContext) {
 				}
 
 				let fieldName = field[1];
-				let fieldNameFormat = util.gonicCasedName(fieldName);
+				let snakeCasedName = util.gonicCasedName(fieldName);
+				let camelCasedName = util.camelCasedName(fieldName);
 				let fieldType = field[2].trim();
 				let items: vscode.CompletionItem[] = [];
 
 				for (let i in match.types) {
 					switch (match.types[i]) {
 						case 'json':
-							items.push(...generateJsonCompletion(fieldNameFormat, fieldType));
+							items.push(...generateJsonCompletion(snakeCasedName, camelCasedName, fieldType));
 							break;
 						case 'bson':
-							items.push(...generateBsonCompletion(fieldNameFormat, fieldType));
+							items.push(...generateBsonCompletion(snakeCasedName, camelCasedName, fieldType));
 							break;
 						case 'xorm':
-							items.push(...generateXormCompletion(fieldNameFormat, fieldType));
+							items.push(...generateXormCompletion(snakeCasedName, fieldType));
 							break;
 						case 'gorm':
-							items.push(...generateGormCompletion(fieldNameFormat, fieldType));
+							items.push(...generateGormCompletion(snakeCasedName, fieldType));
 							break;
 						case 'form':
-							items.push(...generateFormCompletion(fieldNameFormat, fieldType));
+							items.push(...generateFormCompletion(snakeCasedName, camelCasedName, fieldType));
 							break;
 					}
 				}
