@@ -50,7 +50,7 @@ function generateJsonCompletion(snakeCasedName: string, camelCasedName: string, 
 		camelCasedName = camelCasedName.toLowerCase();
 		return [
 			new vscode.CompletionItem(`json:"${camelCasedName}"`, vscode.CompletionItemKind.Text),
-			new vscode.CompletionItem(`json:"${camelCasedName}" gorm:"${camelCasedName}"`, vscode.CompletionItemKind.Text),
+			new vscode.CompletionItem(`json:"${camelCasedName}" gorm:"column:${camelCasedName}"`, vscode.CompletionItemKind.Text),
 			new vscode.CompletionItem(`json:"${camelCasedName},omitempty"`, vscode.CompletionItemKind.Text),
 			new vscode.CompletionItem(`json:"-"`, vscode.CompletionItemKind.Text),
 		];
@@ -59,8 +59,8 @@ function generateJsonCompletion(snakeCasedName: string, camelCasedName: string, 
 	return [
 		new vscode.CompletionItem(`json:"${camelCasedName}"`, vscode.CompletionItemKind.Text),
 		new vscode.CompletionItem(`json:"${snakeCasedName}"`, vscode.CompletionItemKind.Text),
-		new vscode.CompletionItem(`json:"${camelCasedName}" gorm:"${snakeCasedName}"`, vscode.CompletionItemKind.Text),
-		new vscode.CompletionItem(`json:"${snakeCasedName}" gorm:"${snakeCasedName}"`, vscode.CompletionItemKind.Text),
+		new vscode.CompletionItem(`json:"${camelCasedName}" gorm:"column:${snakeCasedName}"`, vscode.CompletionItemKind.Text),
+		new vscode.CompletionItem(`json:"${snakeCasedName}" gorm:"column:${snakeCasedName}"`, vscode.CompletionItemKind.Text),
 		new vscode.CompletionItem(`json:"${camelCasedName},omitempty"`, vscode.CompletionItemKind.Text),
 		new vscode.CompletionItem(`json:"${snakeCasedName},omitempty"`, vscode.CompletionItemKind.Text),
 		new vscode.CompletionItem(`json:"-"`, vscode.CompletionItemKind.Text),
